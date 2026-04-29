@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tug — Reusable Orbital Transfer Vehicle</title>
+<meta name="description" content="Pre-Phase A concept for the reusable orbital Tug — catches Manna pods at apogee, delivers to Lunar Base.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="brand">
+      <span class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="28" height="28">
+          <circle cx="16" cy="16" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" fill="none" stroke="currentColor" stroke-width="1" transform="rotate(-20 16 16)"/>
+          <circle cx="29" cy="11" r="1.5" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="brand-text">tug</span>
+      <span class="brand-sub">pre-phase A · v0.1</span>
+    </div>
+    <nav class="site-nav">
+      <a href="#chain">Chain</a>
+      <a href="#profile">Profile</a>
+      <a href="#inclination">Inclination</a>
+      <a href="#rendezvous">Rendezvous</a>
+      <a href="#deltav">ΔV</a>
+      <a href="#subsystems">Subsystems</a>
+      <a href="https://github.com/thebardchat/tug" class="external">github</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <canvas id="hero-stars" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <h1>The reusable orbital <span class="accent">Tug</span>.</h1>
+    <p class="lede">
+      Catches Manna cargo pods at apogee at sub-m/s closing rates,
+      then ferries them to the Lunar Base via trans-lunar injection.
+    </p>
+    <p class="status">
+      <span class="tag tag-est">pre-phase A</span>
+      <span class="tag">~35° inclination</span>
+      <span class="tag">ΔV budget 8–10 km/s</span>
+      <span class="tag">capture TRL 1–2</span>
+    </p>
+  </div>
+</section>
+
+<!-- 1. CARGO CHAIN -->
+<section id="chain" class="section">
+  <div class="wrap">
+    <h2>1 · The cargo chain</h2>
+    <p class="kicker">
+      Three vehicles, one mission. The Tug is the middle link.
+    </p>
+    <div class="chain" aria-label="Cargo chain animation">
+      <div class="chain-stage" data-stage="rail">
+        <div class="stage-art" id="art-rail"></div>
+        <div class="stage-label">BGKPJR rail</div>
+        <div class="stage-detail">28.7 km · 34.93°N</div>
+      </div>
+      <div class="chain-arrow" data-arrow="1">
+        <svg viewBox="0 0 100 24"><path d="M2 12 H92 M82 4 L92 12 L82 20" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        <span>EM launch</span>
+      </div>
+      <div class="chain-stage" data-stage="pod">
+        <div class="stage-art" id="art-pod"></div>
+        <div class="stage-label">Manna pod</div>
+        <div class="stage-detail">apogee 100–200 km</div>
+      </div>
+      <div class="chain-arrow" data-arrow="2">
+        <svg viewBox="0 0 100 24"><path d="M2 12 H92 M82 4 L92 12 L82 20" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        <span>catch</span>
+      </div>
+      <div class="chain-stage chain-stage-self" data-stage="tug">
+        <div class="stage-art" id="art-tug"></div>
+        <div class="stage-label">Tug</div>
+        <div class="stage-detail">~35° HEO</div>
+      </div>
+      <div class="chain-arrow" data-arrow="3">
+        <svg viewBox="0 0 100 24"><path d="M2 12 H92 M82 4 L92 12 L82 20" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        <span>TLI</span>
+      </div>
+      <div class="chain-stage" data-stage="moon">
+        <div class="stage-art" id="art-moon"></div>
+        <div class="stage-label">Lunar Base</div>
+        <div class="stage-detail">~3 day transit</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. MISSION PROFILE -->
+<section id="profile" class="section section-dark">
+  <div class="wrap">
+    <h2>2 · Mission profile</h2>
+    <p class="kicker">
+      Rail-launched ballistic arc, Tug pre-positioned in elliptical orbit,
+      apogee rendezvous, TLI burn.
+    </p>
+    <div class="profile-stage">
+      <canvas id="profile-canvas" width="1200" height="600"></canvas>
+      <div class="profile-controls">
+        <button id="profile-play" class="btn">Replay</button>
+        <span id="profile-phase" class="phase">phase: standby</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. INCLINATION -->
+<section id="inclination" class="section">
+  <div class="wrap">
+    <h2>3 · Inclination constraint</h2>
+    <p class="kicker">
+      Hazel Green sits at 34.93°N. An equatorial Tug orbit costs 4,620 m/s
+      of plane change — more than the entire ΔV budget.
+    </p>
+    <div class="inclination-grid">
+      <div class="inclination-stage">
+        <svg id="inclination-svg" viewBox="-200 -200 400 400" aria-label="Inclined orbit comparison">
+          <defs>
+            <radialGradient id="earth-grad" cx="40%" cy="40%">
+              <stop offset="0%" stop-color="#1d4f7c"/>
+              <stop offset="60%" stop-color="#0e2a48"/>
+              <stop offset="100%" stop-color="#06121f"/>
+            </radialGradient>
+          </defs>
+          <circle cx="0" cy="0" r="80" fill="url(#earth-grad)" stroke="#2a6391" stroke-width="0.6"/>
+          <ellipse cx="0" cy="0" rx="80" ry="6" fill="none" stroke="#3b8bc4" stroke-width="0.8" stroke-dasharray="2 3" opacity="0.6"/>
+          <ellipse id="orbit-equator" cx="0" cy="0" rx="140" ry="10" fill="none" stroke="#ff6b6b" stroke-width="1.5" opacity="0.85"/>
+          <ellipse id="orbit-inclined" cx="0" cy="0" rx="140" ry="10" fill="none" stroke="#5cf2c0" stroke-width="1.5" opacity="0.95" transform="rotate(-35)"/>
+          <circle id="sat-equator" r="3" fill="#ff6b6b"/>
+          <circle id="sat-inclined" r="3" fill="#5cf2c0"/>
+          <text x="-190" y="-180" fill="#ff6b6b" font-size="10">0° (equatorial) — +4,620 m/s</text>
+          <text x="-190" y="-166" fill="#5cf2c0" font-size="10">~35° (rail-matched) — 0 m/s</text>
+        </svg>
+      </div>
+      <div class="inclination-text">
+        <div class="formula">
+          <code>ΔV<sub>plane</sub> = 2 · v<sub>orbit</sub> · sin(Δi/2)</code>
+          <code>= 2 · 7,784 · sin(34.93°/2)</code>
+          <code>≈ 4,620 m/s</code>
+        </div>
+        <p>
+          A pod launched due east from a 34.93° latitude rail enters an orbit
+          inclined 34.93°. The Tug must live there too — anywhere else means
+          burning a budget-killing plane-change.
+        </p>
+        <p class="footnote">[DERIVED — v_circ at 200 km, Δi = 34.93°]</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. RENDEZVOUS -->
+<section id="rendezvous" class="section section-dark">
+  <div class="wrap">
+    <h2>4 · Phasing &amp; rendezvous</h2>
+    <p class="kicker">
+      The pod arrives at apogee moving at 8–19% of orbital velocity.
+      The Tug matches that slow vx with a gentle RCS burn — sub-m/s closing.
+    </p>
+    <div class="rendezvous-stage">
+      <svg id="rendezvous-svg" viewBox="0 0 1000 500" aria-label="Phasing rendezvous animation">
+        <defs>
+          <radialGradient id="earth-grad-2" cx="40%" cy="40%">
+            <stop offset="0%" stop-color="#1d4f7c"/>
+            <stop offset="100%" stop-color="#06121f"/>
+          </radialGradient>
+        </defs>
+        <circle cx="200" cy="500" r="260" fill="url(#earth-grad-2)" stroke="#2a6391" stroke-width="1"/>
+        <path id="tug-orbit" d="" fill="none" stroke="#5cf2c0" stroke-width="1.2" stroke-dasharray="4 4" opacity="0.7"/>
+        <path id="pod-arc" d="" fill="none" stroke="#ffb84d" stroke-width="1.2" opacity="0.85"/>
+        <g id="apogee-marker" opacity="0">
+          <circle r="34" fill="none" stroke="#ffffff" stroke-width="0.8" stroke-dasharray="3 3"/>
+          <text y="-44" text-anchor="middle" fill="#ffffff" font-size="11">apogee window</text>
+        </g>
+        <circle id="tug-dot" r="6" fill="#5cf2c0"/>
+        <circle id="pod-dot" r="5" fill="#ffb84d"/>
+      </svg>
+      <ol class="rendezvous-steps">
+        <li data-step="1">Tug parking orbit at ~35° inclination, perigee below pod apogee.</li>
+        <li data-step="2">Phasing burn aligns Tug apogee with predicted pod apogee. <span class="dv">ΔV ~10–100 m/s</span></li>
+        <li data-step="3">Tug coasts to apogee. v ≈ 7.8 km/s circular or less.</li>
+        <li data-step="4">Tug matches pod vx. Closing rate &lt; 0.5 m/s. <span class="dv">ΔV ~5–50 m/s</span></li>
+        <li data-step="5">Berthing arm closes. Capture over ~30–120 s.</li>
+        <li data-step="6">TLI burn from combined orbit. <span class="dv">ΔV ~900–1,100 m/s</span></li>
+      </ol>
+      <div class="rendezvous-controls">
+        <button id="rdv-play" class="btn">Play sequence</button>
+        <button id="rdv-reset" class="btn btn-secondary">Reset</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. DELTA-V -->
+<section id="deltav" class="section">
+  <div class="wrap">
+    <h2>5 · Lifetime ΔV budget</h2>
+    <p class="kicker">
+      Order-of-magnitude estimates. Total per Tug lifetime (50 catches, 5 TLI):
+      <strong>~8,000–10,000 m/s</strong>.
+    </p>
+    <div class="dv-chart" id="dv-chart"></div>
+    <p class="footnote">All [ESTIMATE] until trajectory optimization is performed (GMAT / STK).</p>
+  </div>
+</section>
+
+<!-- 6. SUBSYSTEMS -->
+<section id="subsystems" class="section section-dark">
+  <div class="wrap">
+    <h2>6 · Subsystems</h2>
+    <p class="kicker">
+      Functional block diagram. Every block is named but undefined.
+      Capture mechanism is the highest-risk item — TRL 1–2.
+    </p>
+    <div class="subsystem-grid" id="subsystem-grid">
+      <div class="block" data-risk="med">
+        <h3>Propulsion</h3>
+        <ul><li>Main engine</li><li>RCS thrusters</li><li>Propellant tanks</li></ul>
+        <span class="block-tag">undefined · trade pending</span>
+      </div>
+      <div class="block" data-risk="med">
+        <h3>GNC</h3>
+        <ul><li>Star tracker</li><li>IMU</li><li>Rendezvous sensors</li></ul>
+        <span class="block-tag">undefined</span>
+      </div>
+      <div class="block" data-risk="low">
+        <h3>Power</h3>
+        <ul><li>Solar arrays</li><li>Battery</li></ul>
+        <span class="block-tag">undefined</span>
+      </div>
+      <div class="block block-critical" data-risk="high">
+        <h3>Capture mechanism</h3>
+        <ul><li>Berthing arm?</li><li>Net?</li><li>Gripper?</li></ul>
+        <span class="block-tag">TRL 1–2 · highest risk</span>
+      </div>
+      <div class="block" data-risk="med">
+        <h3>Cargo bay</h3>
+        <ul><li>Pod docking ports</li><li>Manna H/I/B interface</li></ul>
+        <span class="block-tag">undefined</span>
+      </div>
+      <div class="block" data-risk="low">
+        <h3>C&amp;DH</h3>
+        <ul><li>Flight computer</li><li>Comms</li></ul>
+        <span class="block-tag">undefined</span>
+      </div>
+      <div class="block" data-risk="low">
+        <h3>Thermal</h3>
+        <ul><li>Radiators</li><li>Insulation</li></ul>
+        <span class="block-tag">undefined</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="blockers" class="section">
+  <div class="wrap">
+    <h2>7 · Open blockers</h2>
+    <p class="kicker">
+      Pre-Phase A. Nothing else proceeds until these resolve.
+    </p>
+    <ol class="blocker-list">
+      <li><span class="bnum">1</span><span>Pod apogee altitude undefined — gated on manna BC redesign.</span></li>
+      <li><span class="bnum">2</span><span>No pod docking port design.</span></li>
+      <li><span class="bnum">3</span><span>Pod GNC undefined — does the pod have attitude control at apogee?</span></li>
+      <li><span class="bnum">4</span><span>Catch window analysis not performed.</span></li>
+      <li><span class="bnum">5</span><span>TLI ΔV not computed — needs orbit hardening.</span></li>
+      <li><span class="bnum">6</span><span>Refueling architecture undesigned — bootstrapping problem.</span></li>
+      <li><span class="bnum">7</span><span>Capture mechanism at TRL 1–2.</span></li>
+      <li><span class="bnum">8</span><span>No propulsion trade study (chemical vs. electric).</span></li>
+    </ol>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>
+      Tug · Pre-Phase A concept memorandum ·
+      <a href="docs/TUG_CONCEPT.md">full document</a> ·
+      <a href="https://github.com/thebardchat/tug">repository</a>
+    </p>
+    <p class="footnote">
+      Maintained by Shane Brazelton · Co-architected with Claude (Anthropic) ·
+      Hazel Green, Alabama · Pi before cloud · Faith first
+    </p>
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TUG — Reusable cislunar transit stage</title>
+  <meta name="description" content="A reusable orbital tug that catches rail-launched ballistic payloads at apogee and delivers them to lunar transfer." />
+ 
+  <!-- Open Graph -->
+  <meta property="og:title" content="TUG — Reusable cislunar transit stage" />
+  <meta property="og:description" content="Rail launch lofts a ballistic pod to apogee. The Tug catches it, burns TLI, returns for the next." />
+  <meta property="og:type" content="website" />
+ 
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="assets/style.css" />
+ 
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20fill='%23050a14'/%3E%3Ccircle%20cx='16'%20cy='16'%20r='9'%20fill='none'%20stroke='%235cf2c0'%20stroke-width='1.5'/%3E%3Ccircle%20cx='25'%20cy='10'%20r='2'%20fill='%23ffb84d'/%3E%3Cpath%20d='M16%2016%20L25%2010'%20stroke='%235cf2c0'%20stroke-width='1'%20stroke-dasharray='2%202'/%3E%3C/svg%3E" />
+</head>
+<body>
+ 
+<!-- ─────────────────────────────────────────────
+     STATUS STRIP — mission-control style
+     ───────────────────────────────────────────── -->
+<div class="status-strip" role="status" aria-label="Mission status">
+  <div class="wrap">
+    <span class="pulse-dot" aria-hidden="true"></span>
+    <span class="status-label">DESIGN PHASE / CONCEPT</span>
+    <span class="status-sep">·</span>
+    <span class="status-meta">Doc rev 0.1</span>
+    <span class="status-sep">·</span>
+    <span class="status-meta">Last update <time datetime="2026-04">Apr 2026</time></span>
+    <span class="status-spacer"></span>
+    <span class="status-meta">tug.flight</span>
+  </div>
+</div>
+ 
+<!-- ─────────────────────────────────────────────
+     HEADER
+     ───────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="TUG home">
+      <svg class="patch" viewBox="0 0 56 56" aria-hidden="true">
+        <circle cx="28" cy="28" r="26" fill="#050a14" stroke="#5cf2c0" stroke-width="1.5"/>
+        <circle cx="28" cy="28" r="22" fill="none" stroke="#1f3050" stroke-width="0.5" stroke-dasharray="2 2"/>
+        <ellipse cx="28" cy="32" rx="16" ry="4" fill="none" stroke="#5cf2c0" stroke-width="1" opacity="0.7"/>
+        <circle cx="28" cy="32" r="6" fill="#0d1827" stroke="#5cf2c0" stroke-width="1"/>
+        <circle cx="42" cy="22" r="2.5" fill="#dcd6c8"/>
+        <path d="M28 32 L42 22" stroke="#ffb84d" stroke-width="1" stroke-dasharray="1.5 1.5"/>
+        <text x="28" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#7a8fa8" letter-spacing="1.5">TUG · 01</text>
+      </svg>
+      <span class="brand-text">
+        <span class="brand-name">TUG</span>
+        <span class="brand-sub">Reusable cislunar transit stage</span>
+      </span>
+    </a>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="#mission">Mission</a>
+      <a href="#profile">Profile</a>
+      <a href="#conops">ConOps</a>
+      <a href="#mechanics">Mechanics</a>
+      <a href="#vehicle">Vehicle</a>
+      <a href="#dv">ΔV</a>
+      <a href="#risks">Risks</a>
+    </nav>
+  </div>
+</header>
+ 
+<main id="top">
+ 
+<!-- ─────────────────────────────────────────────
+     HERO
+     ───────────────────────────────────────────── -->
+<section class="hero" aria-labelledby="hero-h">
+  <canvas id="hero-stars" aria-hidden="true"></canvas>
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="wrap hero-inner">
+    <div class="eyebrow">
+      <span class="eyebrow-num">00</span>
+      <span class="eyebrow-text">Concept brief</span>
+    </div>
+    <h1 id="hero-h">
+      Cargo to <span class="accent">cislunar</span><br/>
+      on a reusable Tug.
+    </h1>
+    <p class="lede">
+      Rail launch lofts a ballistic pod to apogee. A reusable Tug — already in
+      a phasing orbit — performs apogee rendezvous, captures the pod, and burns
+      Trans-Lunar Injection. The Tug returns. The pod continues to the Moon.
+    </p>
+    <div class="hero-stats" role="list">
+      <div class="stat" role="listitem">
+        <div class="stat-num">8&ndash;10<span class="stat-unit">km/s</span></div>
+        <div class="stat-label">Tug ΔV / lifetime</div>
+      </div>
+      <div class="stat" role="listitem">
+        <div class="stat-num">~150<span class="stat-unit">km</span></div>
+        <div class="stat-label">Pod apogee target</div>
+      </div>
+      <div class="stat" role="listitem">
+        <div class="stat-num">≥10<span class="stat-unit">×</span></div>
+        <div class="stat-label">Tug reuse cycles</div>
+      </div>
+      <div class="stat" role="listitem">
+        <div class="stat-num">0<span class="stat-unit">kg</span></div>
+        <div class="stat-label">Pod propellant to TLI</div>
+      </div>
+    </div>
+    <div class="scroll-cue" aria-hidden="true">
+      <span>Scroll</span>
+      <svg viewBox="0 0 12 24" width="12" height="24"><path d="M6 2 V20 M2 16 L6 20 L10 16" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+    </div>
+  </div>
+</section>
+ 
+<!-- ─────────────────────────────────────────────
+     01 / MISSION OVERVIEW
+     ───────────────────────────────────────────── -->
+<section id="mission" class="section" aria-labelledby="mission-h">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">01</span>
+      <h2 id="mission-h">Mission overview</h2>
+      <p class="kicker">A four-stage cargo chain. The Tug is the only piece that crosses the apogee&hairsp;→&hairsp;TLI gap. Everything else is either ground hardware or a passive ballistic payload.</p>
+    </div>
+ 
+    <div class="chain" aria-label="Cargo chain stages">
+      <div class="chain-stage">
+        <div class="stage-art" id="art-rail" aria-hidden="true"></div>
+        <div class="stage-num">A</div>
+        <div class="stage-label">Rail launch</div>
+        <div class="stage-detail">Mass-driver / kinetic launch system</div>
+      </div>
+      <div class="chain-arrow" aria-hidden="true">
+        <svg viewBox="0 0 70 18"><path d="M2 9 H62 M56 4 L66 9 L56 14" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>boosts</span>
+      </div>
+      <div class="chain-stage">
+        <div class="stage-art" id="art-pod" aria-hidden="true"></div>
+        <div class="stage-num">B</div>
+        <div class="stage-label">Ballistic pod</div>
+        <div class="stage-detail">Passive cargo, no main propulsion</div>
+      </div>
+      <div class="chain-arrow" aria-hidden="true">
+        <svg viewBox="0 0 70 18"><path d="M2 9 H62 M56 4 L66 9 L56 14" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>caught at apogee</span>
+      </div>
+      <div class="chain-stage chain-stage-self">
+        <div class="stage-art" id="art-tug" aria-hidden="true"></div>
+        <div class="stage-num">C</div>
+        <div class="stage-label">Tug</div>
+        <div class="stage-detail">Reusable transfer stage</div>
+      </div>
+      <div class="chain-arrow" aria-hidden="true">
+        <svg viewBox="0 0 70 18"><path d="M2 9 H62 M56 4 L66 9 L56 14" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>TLI burn</span>
+      </div>
+      <div class="chain-stage">
+        <div class="stage-art" id="art-moon" aria-hidden="true"></div>
+        <div class="stage-num">D</div>
+        <div class="stage-label">Lunar delivery</div>
+        <div class="stage-detail">Free return or LLO insertion</div>
+      </div>
+    </div>
+ 
+    <p class="footnote">A only flies once per pod. C flies many times. The economics turn on how often C can be turned around between catches.</p>
+  </div>
+</section>
+ 
+<!-- ─────────────────────────────────────────────
+     02 / MISSION PROFILE — animated canvas
+     ───────────────────────────────────────────── -->
+<section id="profile" class="section section-dark" aria-labelledby="profile-h">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <h2 id="profile-h">Mission profile</h2>
+      <p class="kicker">Single mission, end to end. Rail boost · ballistic ascent · Tug phasing · apogee rendezvous · TLI · lunar transfer.</p>
+    </div>
+ 
+    <div class="profile-stage">
+      <div class="profile-readouts">
+        <div class="readout">
+          <div class="readout-label">PHASE</div>
+          <div class="readout-value" id="profile-phase">—</div>
+        </div>
+        <div class="readout">
+          <div class="readout-label">MET</div>
+          <div class="readout-value" id="profile-met">T+00:00</div>
+        </div>
+        <div class="readout">
+          <div class="readout-label">ALT (POD)</div>
+          <div class="readout-value" id="profile-alt">— km</div>
+        </div>
+        <div class="readout-actions">
+          <button class="btn btn-primary" id="profile-play" type="button">Replay</button>
+        </div>
+      </div>
+      <canvas id="profile-canvas" width="1280" height="720" aria-label="Animated mission profile from rail launch through lunar transfer"></canvas>
+      <div class="profile-legend">
+        <span><i style="background:#5cf2c0"></i>Tug</span>
+        <span><i style="background:#ffb84d"></i>Manna pod</span>
+        <span><i style="background:#dcd6c8"></i>Moon</span>
+        <span><i class="dashed"></i>Tug parking orbit</span>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ─────────────────────────────────────────────
+     03 / CONCEPT OF OPERATIONS
+     ───────────────────────────────────────────── -->
+<section id="conops" class="section" aria-labelledby="conops-h">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <h2 id="conops-h">Concept of operations</h2>
+      <p class="kicker">Single end-to-end flight. Times are illustrative; real values depend on rail-system geometry and apogee target.</p>
+    </div>
+ 
+    <ol class="conops-timeline">
+      <li>
+        <div class="phase-time">T&minus;72:00:00</div>
+        <div class="phase-name">Tug parking-orbit phasing</div>
+        <div class="phase-body">Tug holds in low-energy elliptical orbit. Trim burns synchronize apogee passage with predicted pod arrival.</div>
+        <div class="phase-tag">routine</div>
+      </li>
+      <li>
+        <div class="phase-time">T+00:00:00</div>
+        <div class="phase-name">Rail release</div>
+        <div class="phase-body">Pod separates from rail at exit velocity. Cold-gas attitude only — no main propulsion fires.</div>
+        <div class="phase-tag critical">critical</div>
+      </li>
+      <li>
+        <div class="phase-time">T+00:04:30</div>
+        <div class="phase-name">Ballistic ascent</div>
+        <div class="phase-body">Pod follows ballistic arc. Apogee at ~150 km. Beacon transmits state vector to Tug.</div>
+        <div class="phase-tag">routine</div>
+      </li>
+      <li>
+        <div class="phase-time">T+00:06:45</div>
+        <div class="phase-name">Apogee rendezvous</div>
+        <div class="phase-body">Tug matches velocity within 0.5 m/s and closes the last 30 m on cold gas. Capture confirmed by latch sensors.</div>
+        <div class="phase-tag critical">critical</div>
+      </li>
+      <li>
+        <div class="phase-time">T+00:24:00</div>
+        <div class="phase-name">TLI burn</div>
+        <div class="phase-body">Tug + pod stack burns ~1,000 m/s for trans-lunar injection. Burn windows align with monthly lunar phasing.</div>
+        <div class="phase-tag critical">critical</div>
+      </li>
+      <li>
+        <div class="phase-time">T+00:34:00</div>
+        <div class="phase-name">Pod separation</div>
+        <div class="phase-body">Tug releases pod on lunar transfer trajectory. Tug flips, performs return burn, drops back to phasing orbit.</div>
+        <div class="phase-tag">routine</div>
+      </li>
+      <li>
+        <div class="phase-time">T+72:00:00</div>
+        <div class="phase-name">Lunar delivery</div>
+        <div class="phase-body">Pod arrives at Moon. Free return, LLO insertion, or surface impact depending on payload class.</div>
+        <div class="phase-tag">routine</div>
+      </li>
+    </ol>
+  </div>
+</section>
+ 
+<!-- ─────────────────────────────────────────────
+     04 / ORBITAL MECHANICS
+     ───────────────────────────────────────────── -->
+<section id="mechanics" class="section section-dark" aria-labelledby="mechanics-h">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">04</span>
+      <h2 id="mechanics-h">Orbital mechanics</h2>
+      <p class="kicker">Two constraints set the architecture: inclination matching and apogee-velocity rendezvous.</p>
+    </div>
+ 
+    <div class="mech-grid">
+      <article class="mech-card">
+        <h3>Inclination matching</h3>
+        <p>The Tug must launch into an orbital plane that contains the rail's exit vector. The rail's latitude and azimuth fix the minimum achievable inclination of the rendezvous orbit.</p>
+        <div class="formula">
+          <code>cos(i) = sin(az) · cos(φ)</code>
+          <code class="formula-where">i = inclination · az = launch azimuth · φ = site latitude</code>
+        </div>
+        <div class="inclination-stage" aria-hidden="true">
+          <svg id="inclination-svg" viewBox="-180 -100 360 200">
+            <ellipse cx="0" cy="0" rx="140" ry="14" fill="none" stroke="#1f3050" stroke-width="0.7" stroke-dasharray="3 3"/>
+            <circle cx="0" cy="0" r="36" fill="#0d2440" stroke="#2a7eda" stroke-width="0.8"/>
+            <ellipse cx="0" cy="0" rx="140" ry="14" fill="none" stroke="#5cf2c0" stroke-width="1.2" opacity="0.85"/>
+            <ellipse cx="0" cy="0" rx="140" ry="14" fill="none" stroke="#ffb84d" stroke-width="1.2" opacity="0.85" transform="rotate(-35)"/>
+            <circle id="sat-equator" cx="140" cy="0" r="3.5" fill="#5cf2c0"/>
+            <circle id="sat-inclined" cx="0" cy="0" r="3.5" fill="#ffb84d"/>
+            <text x="-170" y="-80" font-family="JetBrains Mono, monospace" font-size="9" fill="#5cf2c0">equatorial · 0°</text>
+            <text x="-170" y="-66" font-family="JetBrains Mono, monospace" font-size="9" fill="#ffb84d">inclined · 35°</text>
+          </svg>
+        </div>
+      </article>
+ 
+      <article class="mech-card">
+        <h3>Apogee rendezvous</h3>
+        <p>At apogee, both the Tug and the pod move slowest. The relative-velocity budget for capture is smallest there. Six steps; the Tug does the work.</p>
+        <div class="rendezvous-stage">
+          <svg id="rendezvous-svg" viewBox="0 0 800 600" aria-hidden="true">
+            <defs>
+              <radialGradient id="earth-grad" cx="0.4" cy="0.4">
+                <stop offset="0" stop-color="#2a7eda"/>
+                <stop offset="0.7" stop-color="#0d2440"/>
+                <stop offset="1" stop-color="#050a14"/>
+              </radialGradient>
+            </defs>
+            <circle cx="200" cy="500" r="260" fill="url(#earth-grad)"/>
+            <circle cx="200" cy="500" r="264" fill="none" stroke="#2a7eda" stroke-width="1" opacity="0.3"/>
+            <path id="tug-orbit" d="" fill="none" stroke="#5cf2c0" stroke-width="1.4" stroke-dasharray="6 6" opacity="0.55"/>
+            <path id="pod-arc" d="" fill="none" stroke="#ffb84d" stroke-width="1.6" opacity="0.7"/>
+            <g id="apogee-marker" opacity="0">
+              <circle r="36" fill="none" stroke="#e8eef7" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+              <line x1="-46" y1="0" x2="-22" y2="0" stroke="#e8eef7" stroke-width="1"/>
+              <line x1="22" y1="0" x2="46" y2="0" stroke="#e8eef7" stroke-width="1"/>
+              <line x1="0" y1="-46" x2="0" y2="-22" stroke="#e8eef7" stroke-width="1"/>
+              <line x1="0" y1="22" x2="0" y2="46" stroke="#e8eef7" stroke-width="1"/>
+              <text x="46" y="-38" font-family="JetBrains Mono, monospace" font-size="11" fill="#e8eef7">apogee</text>
+            </g>
+            <circle id="tug-dot" cx="0" cy="0" r="6" fill="#5cf2c0"/>
+            <circle id="pod-dot" cx="90" cy="270" r="5" fill="#ffb84d"/>
+            <text x="20" y="290" font-family="JetBrains Mono, monospace" font-size="10" fill="#ffb84d">rail</text>
+          </svg>
+          <ol class="rendezvous-steps">
+            <li data-step="1"><div class="step-name">Park</div><div class="step-detail">Tug in phasing orbit</div></li>
+            <li data-step="2"><div class="step-name">Phase</div><div class="step-detail">Trim apogee timing</div></li>
+            <li data-step="3"><div class="step-name">Coast</div><div class="step-detail">Toward apogee · pod ascends</div></li>
+            <li data-step="4"><div class="step-name">Match</div><div class="step-detail">v rel &lt; 0.5 m/s</div></li>
+            <li data-step="5"><div class="step-name">Capture</div><div class="step-detail">Latches engaged</div></li>
+            <li data-step="6"><div class="step-name">TLI</div><div class="step-detail">Stack burns for transfer</div></li>
+          </ol>
+          <div class="rendezvous-controls">
+            <button class="btn btn-primary" id="rdv-play" type="button">Play sequence</button>
+            <button class="btn btn-secondary" id="rdv-reset" type="button">Reset</button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+ 
+<!-- ─────────────────────────────────────────────
+     05 / VEHICLE ARCHITECTURE
+     ───────────────────────────────────────────── -->
+<section id="vehicle" class="section" aria-labelledby="vehicle-h">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">05</span>
+      <h2 id="vehicle-h">Vehicle architecture</h2>
+      <p class="kicker">Tug subsystem block diagram. Mass and power are top-level estimates pending CDR.</p>
+    </div>
+ 
+    <div class="vehicle-grid">
+ 
+      <article class="block">
+        <header><span class="block-id">PRO</span><h3>Propulsion</h3></header>
+        <ul>
+          <li>Bipropellant main · methalox</li>
+          <li>RCS · MMH/NTO clusters</li>
+          <li>Tank set · sized for TLI + return</li>
+        </ul>
+        <footer><span class="block-stat">est. 14 kN main</span></footer>
+      </article>
+ 
+      <article class="block">
+        <header><span class="block-id">GNC</span><h3>Guidance &amp; nav</h3></header>
+        <ul>
+          <li>Star tracker · 2× redundant</li>
+          <li>IMU · ring-laser gyro</li>
+          <li>Optical close-approach cam</li>
+          <li>S-band link to ground &amp; pod</li>
+        </ul>
+        <footer><span class="block-stat">closing rate &lt; 0.5 m/s</span></footer>
+      </article>
+ 
+      <article class="block block-critical">
+        <header><span class="block-id">CAP</span><h3>Capture</h3></header>
+        <ul>
+          <li>Berthing latches · 3-point</li>
+          <li>Soft-dock buffer · &le; 0.3 m</li>
+          <li>Pod state-vector receiver</li>
+        </ul>
+        <footer><span class="block-stat">single-point failure mode</span></footer>
+      </article>
+ 
+      <article class="block">
+        <header><span class="block-id">EPS</span><h3>Power</h3></header>
+        <ul>
+          <li>GaAs solar arrays · 2 wings</li>
+          <li>Li-ion buffer · 8 hr eclipse</li>
+          <li>28 V regulated bus</li>
+        </ul>
+        <footer><span class="block-stat">est. 1.4 kW BoL</span></footer>
+      </article>
+ 
+      <article class="block">
+        <header><span class="block-id">TCS</span><h3>Thermal</h3></header>
+        <ul>
+          <li>Body-mounted radiators</li>
+          <li>Heat-pipe loop to bus</li>
+          <li>MLI on cryo tanks</li>
+        </ul>
+        <footer><span class="block-stat">−40 to +60 °C operating</span></footer>
+      </article>
+ 
+      <article class="block">
+        <header><span class="block-id">STR</span><h3>Structure</h3></header>
+        <ul>
+          <li>Al-Li primary frame</li>
+          <li>Composite tank skirts</li>
+          <li>Capture port at +Z face</li>
+        </ul>
+        <footer><span class="block-stat">est. 2,200 kg dry</span></footer>
+      </article>
+ 
+    </div>
+  </div>
+</section>
+ 
+<!-- ─────────────────────────────────────────────
+     06 / ΔV BUDGET
+     ───────────────────────────────────────────── -->
+<section id="dv" class="section section-dark" aria-labelledby="dv-h">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">06</span>
+      <h2 id="dv-h">ΔV budget</h2>
+      <p class="kicker">Per-mission and lifetime. Bars animate on first view. The launch-to-orbit ΔV is paid by the rail, not by the Tug — shown faded for context.</p>
+    </div>
+ 
+    <div id="dv-chart" class="dv-chart" aria-label="Delta-V budget bar chart"></div>
+ 
+    <p class="footnote">Lifetime total assumes ≥10 catch–TLI–return cycles plus station-keeping. Headline Tug propellant load sized to lifetime + 10% reserve.</p>
+  </div>
+</section>
+ 
+<!-- ─────────────────────────────────────────────
+     07 / RISKS &amp; OPEN QUESTIONS
+     ───────────────────────────────────────────── -->
+<section id="risks" class="section" aria-labelledby="risks-h">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">07</span>
+      <h2 id="risks-h">Risks &amp; open questions</h2>
+      <p class="kicker">Where the architecture is most likely to fail review. Each item names the discipline that owns it.</p>
+    </div>
+ 
+    <ul class="risk-grid">
+      <li>
+        <div class="risk-num">R1</div>
+        <div class="risk-body">
+          <h4>Pod survives rail acceleration</h4>
+          <p>Rail-launch g-loading constrains payload class. Most spacecraft electronics are not rated for the relevant peak.</p>
+          <span class="risk-owner">Owner · Pod structures</span>
+        </div>
+      </li>
+      <li>
+        <div class="risk-num">R2</div>
+        <div class="risk-body">
+          <h4>Apogee timing precision</h4>
+          <p>Tug arrival window at apogee is small. Atmospheric drag on rising pod adds dispersion; phasing-burn budget must absorb it.</p>
+          <span class="risk-owner">Owner · GNC</span>
+        </div>
+      </li>
+      <li>
+        <div class="risk-num">R3</div>
+        <div class="risk-body">
+          <h4>Single-shot capture</h4>
+          <p>Pod has no main propulsion. If Tug misses, pod is unrecoverable. No abort-to-orbit option.</p>
+          <span class="risk-owner">Owner · Mission ops</span>
+        </div>
+      </li>
+      <li>
+        <div class="risk-num">R4</div>
+        <div class="risk-body">
+          <h4>Cryo boil-off</h4>
+          <p>Methalox loiter losses across phasing duration cut into TLI margin. Either active cooling or shorter phasing.</p>
+          <span class="risk-owner">Owner · Propulsion / TCS</span>
+        </div>
+      </li>
+      <li>
+        <div class="risk-num">R5</div>
+        <div class="risk-body">
+          <h4>Inclination from inland sites</h4>
+          <p>High-latitude rail sites limit accessible inclinations and complicate downrange safety. Equatorial siting is preferred but politically constrained.</p>
+          <span class="risk-owner">Owner · Mission design</span>
+        </div>
+      </li>
+      <li>
+        <div class="risk-num">R6</div>
+        <div class="risk-body">
+          <h4>Reuse cadence vs refit</h4>
+          <p>Economic case relies on ≥10 cycles. Inspection, refurb, and propellant logistics determine real reuse rate.</p>
+          <span class="risk-owner">Owner · Operations</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+ 
+</main>
+ 
+<!-- ─────────────────────────────────────────────
+     FOOTER
+     ───────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">TUG</div>
+        <p class="footer-line">Reusable cislunar transit stage · concept brief</p>
+      </div>
+      <div>
+        <div class="footer-head">Document</div>
+        <p class="footer-line">Rev 0.1 · Apr 2026</p>
+        <p class="footer-line">Status · design phase</p>
+      </div>
+      <div>
+        <div class="footer-head">Acknowledgements</div>
+        <p class="footer-line">Rail-launch concepts informed by mass-driver literature.</p>
+        <p class="footer-line">Lunar transfer references NASA technical reports.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+ 
+<script src="assets/app.js" defer></script>
+</body>
+</html>
+ 

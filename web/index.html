@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Tug · Animated Mission Walkthrough</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Animated reference walkthrough of the Tug orbital transfer concept (v0.1, Pre-Phase A).">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="title">
+      <h1>Tug Reference Concept</h1>
+      <span class="tag">v0.1 · Pre-Phase A · animated walkthrough</span>
+    </div>
+    <nav>
+      <a href="https://github.com/thebardchat/tug/blob/main/docs/TUG_CONCEPT.md" target="_blank" rel="noopener">Concept doc</a>
+      <a href="https://github.com/thebardchat/tug" target="_blank" rel="noopener">Repo</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="stage-wrap">
+      <canvas id="stage" width="1280" height="720" aria-label="Tug mission animation"></canvas>
+
+      <div class="hud" id="hud">
+        <div class="phase">
+          <span class="phase-num" id="phaseNum">0</span>
+          <span class="phase-name" id="phaseName">Pre-launch</span>
+        </div>
+        <div class="readouts">
+          <div class="r"><label>T+</label><span id="rT">0.0 s</span></div>
+          <div class="r"><label>Pod altitude</label><span id="rPodAlt">0 km</span></div>
+          <div class="r"><label>Pod v<sub>x</sub></label><span id="rPodVx">0 m/s</span></div>
+          <div class="r"><label>Tug v<sub>x</sub></label><span id="rTugVx">7,784 m/s</span></div>
+          <div class="r"><label>Closing rate</label><span id="rClose">— m/s</span></div>
+          <div class="r"><label>ΔV used</label><span id="rDv">0 m/s</span></div>
+        </div>
+        <p class="caption" id="caption">Tug pre-positioned in a 35° inclined HEO. Rail at Hazel Green, AL (34.93°N) is loaded.</p>
+      </div>
+    </section>
+
+    <section class="controls">
+      <div class="row">
+        <button id="playBtn" aria-label="Play / pause">⏸</button>
+        <input type="range" id="scrub" min="0" max="100" step="0.05" value="0" aria-label="Timeline scrubber">
+        <span id="timeLabel">0.0 / 0.0 s</span>
+        <label class="speed">
+          Speed
+          <select id="speed">
+            <option value="0.5">0.5×</option>
+            <option value="1" selected>1×</option>
+            <option value="2">2×</option>
+            <option value="4">4×</option>
+          </select>
+        </label>
+      </div>
+      <div class="phase-jumper" id="phaseJumper"></div>
+    </section>
+
+    <section class="explainer">
+      <h2>What you're looking at</h2>
+      <div class="grid">
+        <div>
+          <h3>Geometry</h3>
+          <p>The Manna pod launches on a ballistic suborbital arc from the BGKPJR rail at 34.93°N. The Tug is pre-positioned in a 35° inclined orbit so that its apogee coincides with the pod's apogee in both altitude and in-track position. No plane change is needed; the launch latitude and orbit inclination match.</p>
+        </div>
+        <div>
+          <h3>The apogee insight</h3>
+          <p>At apogee the pod's horizontal velocity is the smallest it will ever be on the trajectory. Per the v0.1 doc, the residual v<sub>x</sub> is roughly 8–19% of orbital velocity at that altitude — the pod is nearly stopped horizontally, not arriving at 4 km/s. The Tug matches that slow velocity with a small RCS burn (5–50 m/s).</p>
+        </div>
+        <div>
+          <h3>What's still open</h3>
+          <p>This is a Pre-Phase A concept. The animation portrays the doc's intended geometry. Eight blockers in §8 (pod apogee altitude, docking port, GNC, catch window, TLI ΔV, refueling, capture mechanism TRL, propulsion trade) gate further design. Numbers in the HUD are <code>[ESTIMATE]</code> per the doc.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    <span>Pi before cloud · Faith first</span>
+    <span>Operating under the <a href="https://github.com/thebardchat/constitution" target="_blank" rel="noopener">ShaneTheBrain Constitution</a></span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
